@@ -1,0 +1,37 @@
+sequenceDiagram
+    actor Faculty as Faculty/Sender
+    participant SA as Sender Application
+    participant RC as Recipient Application
+    actor Recipient
+    participant Channel as Untrusted Communication Channel
+    participant Store as Trusted Sender Public Key Store
+    Note over Faculty,Recipient: Independent RSA-3072 key pairs are generated
+    Faculty->>SA: Generate sender key pair
+    Recipient->>RC: Generate recipient key pair
+    SA-->>RC: Exchange public keys through trusted channel
+    RC->>Store: Store verified sender public key
+    Faculty->>SA: Select examination paper
+    SA->>SA: Generate random AES-256 key and 12-byte nonce
+    SA->>SA: AES-256-GCM encrypt paper with canonical metadata AAD
+    SA->>SA: Wrap key with recipient RSA public key (OAEP-SHA256)
+    SA->>SA: Construct package; sign canonical contents (RSA-PSS-SHA256)
+    SA->>Channel: Transfer .secpkg
+    Channel->>RC: Deliver package
+    RC->>RC: Parse and validate package
+    RC->>Store: Load trusted sender public key
+    RC->>RC: Verify sender signature
+    alt Signature failure
+        RC-->>Recipient: Reject; no plaintext released
+    else Signature valid
+        RC->>RC: Unwrap AES key with recipient private key
+        alt Incorrect recipient key
+            RC-->>Recipient: Reject; no plaintext released
+        else Correct recipient key
+            RC->>RC: Authenticate and decrypt with AES-GCM
+            alt GCM authentication failure
+                RC-->>Recipient: Reject; no plaintext released
+            else Authentication succeeds
+                RC-->>Recipient: Save recovered paper atomically
+            end
+        end
+    end

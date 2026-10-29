@@ -1,0 +1,9 @@
+FICTIONAL WORKSHOP ASSESSMENT
+Course: Introduction to Secure File Exchange
+Duration: 30 minutes
+
+1. In your own words, distinguish confidentiality from integrity.
+2. A fictional messenger uses a fresh session key for every document. Explain one benefit.
+3. Why should the recipient verify a digital signature before accepting a package?
+
+This is invented workshop material and contains no real examination questions.

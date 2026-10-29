@@ -1,0 +1,16 @@
+TEST RESULTS — NOT EXECUTED IN AUTHORING ENVIRONMENT
+
+Reason: cryptography and pytest were not installed in the available Python environment, and dependency installation was not performed. These are expected outcomes from the test design, not actual test results.
+
+Run from the project root after installing requirements:
+  python -m pytest -v
+
+Expected cases:
+1. Authorized successful transfer — PASS expected
+2. Ciphertext tampering without resigning — PASS expected (signature rejection)
+3. Ciphertext tampering with test sender resigning — PASS expected (GCM rejection)
+4. Metadata and signature tampering — PASS expected (signature rejection)
+5. Incorrect recipient and sender keys — PASS expected (key rejection)
+6. Encrypt same file twice — PASS expected (fresh session key/nonce, both decrypt)
+7. Malformed package fields/Base64/algorithm/tag — PASS expected (controlled rejection)
+8. Failed verification/decryption produces no plaintext — PASS expected
